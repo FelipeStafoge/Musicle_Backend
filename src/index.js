@@ -1,11 +1,12 @@
+require('dotenv').config();
+
 const mongoose = require("mongoose");
 const app = require("./endpoints");
+const connectDB = require("./connectMongo");
 
-PORT = process.env.PORT;
+connectDB();
+const PORT = process.env.PORT;
 
-app.listen(PORT, ()=>{
-    mongoose.connect(process.env.MONGODB_CONNECT_URI);
+app.listen(PORT, () => {
     
-
-    
-})
+});
