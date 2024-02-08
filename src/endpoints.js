@@ -87,16 +87,15 @@ app.put('/:id', async (req,res) =>{
 
 let actual_artist
 
-const job = new CronJob ('0 0 * * * *', async function todayArtist(){
+const job = new CronJob ('0 0 * * *', async function todayArtist(){
     const deleteone = await Artist_Today.deleteOne()
     actual_artist = await takeArandomArtist()
 
     return actual_artist
-}, null, true, 'America/Los_Angeles'); 
+}, null, true, 'America/Sao_Paulo'); 
 
 
 job.start();
-
 
 
 app.get('/todayArtist',async (req,res)=>{
