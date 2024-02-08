@@ -4,8 +4,9 @@ const mongoose = require("mongoose");
 const CronJob = require("cron").CronJob;
 
 
+
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
 
 const Artist = mongoose.model('Artist', { 
@@ -32,10 +33,9 @@ function getRandomNumber(min, max) {
 
 async function takeArandomArtist(){
     const artists = await Artist.find();
-    lenght_artist_list = artists.length
-    getRandomNumber(1, lenght_artist_list)
+    lenght_artist_list = artists.length;
+    getRandomNumber(1, lenght_artist_list);
     random_artist = artists[getRandomNumber(1, lenght_artist_list)]
-    console.log(random_artist)
 
     const artist_today = new Artist_Today({
         artistID: random_artist['artistID'],
@@ -44,7 +44,31 @@ async function takeArandomArtist(){
         tips: random_artist['tips']
     })
     await artist_today.save();
-    return random_artist
+    return random_artist;
+
+}
+
+
+
+
+async function changePreviewURL(actual_artist){
+    const link = "https://itunes.apple.com/lookup?id="+actual_artist['artistID']+"&entity=song";
+    
+    const response = await fetch(link);
+    const data =  await response.json();
+    getRandomNumber(1, 50)
+    while (true) {
+        dataId = await data['results'][getRandomNumber(1, 50)]['artistId'];
+        dataName = await data['results'][getRandomNumber(1, 50)]['artistName'];
+        if (dataId == actual_artist['artistID'] && dataName == actual_artist['name']){
+            new_preview = data['results'][getRandomNumber(1, 50)]['previewUrl'];
+            break;
+        }
+    }
+    mongoose_id_artist = actual_artist['_id']
+    const artist = await Artist.findByIdAndUpdate(mongoose_id_artist,{
+        preview_URL: new_preview
+    })
 
 }
 
@@ -52,8 +76,7 @@ async function takeArandomArtist(){
 
 app.get('/', async (req,res)=>{
     const artists = await Artist.find();
-    
-    res.send(artists)
+    res.send(artists);
 })
 
 app.post("/post", async (req,res)=>{
@@ -62,7 +85,7 @@ app.post("/post", async (req,res)=>{
         name: req.body.name,
         preview_URL: req.body.preview_URL,
         tips: req.body.tips
-    })
+    });
     
     await artist.save();
     return res.send(artist);
@@ -82,14 +105,15 @@ app.put('/:id', async (req,res) =>{
     }, {
         new: true
     })
-    return res.send(artist)
+    return res.send(artist);
 })
 
-let actual_artist
+let actual_artist;
 
 const job = new CronJob ('0 0 * * *', async function todayArtist(){
-    const deleteone = await Artist_Today.deleteOne()
-    actual_artist = await takeArandomArtist()
+    actual_artist = await takeArandomArtist();
+    const deleteone = await Artist_Today.deleteOne();
+    changePreviewURL(actual_artist)
 
     return actual_artist
 }, null, true, 'America/Sao_Paulo'); 
@@ -103,13 +127,13 @@ app.get('/todayArtist',async (req,res)=>{
     if (!artists){
         return res.status(404).send("error")
     }
-    return res.status(200).send(artists)
+    return res.status(200).send(artists);
 })
 
 
 app.get('/allNames', async(req,res)=>{
     const artists = await Artist.find({}, 'name');
-    return res.status(200).send(artists)
+    return res.status(200).send(artists);
 })
 
 module.exports = app;
