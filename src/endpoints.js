@@ -103,7 +103,7 @@ app.put('/:id', async (req,res) =>{
 
 let actual_artist;
 
-cron.schedule('3 * * * *', async() => {
+cron.schedule('0 0 * * *', async() => {
     actual_artist = await takeArandomArtist();
     const deleteone = await Artist_Today.deleteOne();
     changePreviewURL(actual_artist)
@@ -111,7 +111,7 @@ cron.schedule('3 * * * *', async() => {
     return actual_artist
   });
 
-app.get('/C',async (req,res)=>{
+app.get('/todayArtist',async (req,res)=>{
     const artists = await Artist_Today.findOne()
     if (!artists){
         return res.status(404).send("error")
