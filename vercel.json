@@ -11,5 +11,9 @@
         "src": "/(.*)",
         "dest": "/"
       }
-    ]
+    ],
+    "crons": [{
+      "path": "/src/endpoints",
+      "schedule": "0 10 * * *"
+    }]
 }

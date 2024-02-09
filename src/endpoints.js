@@ -1,10 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const CronJob = require("cron").CronJob;
-
-
-
+const cron = require('node-cron');
 const app = express();
 app.use(express.json());
 
@@ -22,7 +19,6 @@ const Artist_Today = mongoose.model('Artist_Today', {
     preview_URL : String,
     tips: Array,    
 });
-
 
 
 function getRandomNumber(min, max) {
@@ -49,8 +45,6 @@ async function takeArandomArtist(){
 }
 
 
-
-
 async function changePreviewURL(actual_artist){
     const link = "https://itunes.apple.com/lookup?id="+actual_artist['artistID']+"&entity=song";
     
@@ -71,7 +65,6 @@ async function changePreviewURL(actual_artist){
     })
 
 }
-
 
 
 app.get('/', async (req,res)=>{
@@ -110,17 +103,13 @@ app.put('/:id', async (req,res) =>{
 
 let actual_artist;
 
-const job = new CronJob ('0 0 * * *', async function todayArtist(){
+cron.schedule('10 12 * * *', async() => {
     actual_artist = await takeArandomArtist();
     const deleteone = await Artist_Today.deleteOne();
     changePreviewURL(actual_artist)
 
     return actual_artist
-}, null, true, 'America/Sao_Paulo'); 
-
-
-job.start();
-
+  });
 
 app.get('/todayArtist',async (req,res)=>{
     const artists = await Artist_Today.findOne()
