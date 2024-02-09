@@ -103,7 +103,7 @@ app.put('/:id', async (req,res) =>{
 
 let actual_artist;
 
-cron.schedule('10 12 * * *', async() => {
+cron.schedule('0 0 * * *', async() => {
     actual_artist = await takeArandomArtist();
     const deleteone = await Artist_Today.deleteOne();
     changePreviewURL(actual_artist)
