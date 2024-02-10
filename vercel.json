@@ -12,8 +12,10 @@
         "dest": "/"
       }
     ],
-    "crons": [{
-      "path": "/src/endpoints",
-      "schedule": "0 0 * * *"
-    }]
+    "crons": [
+      {
+        "path": "/cronJobTodayArtist",
+        "schedule": "1 0 * * *"
+      }
+    ]
 }
