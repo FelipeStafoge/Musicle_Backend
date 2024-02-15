@@ -15,7 +15,7 @@
     "crons": [
       {
         "path": "/cronJobTodayArtist",
-        "schedule": "1 0 * * *"
+        "schedule": "18 2 * * *"
       }
     ]
 }
