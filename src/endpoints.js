@@ -101,7 +101,7 @@ app.put('/:id', async (req,res) =>{
 })
 
 
-app.get('/todayArtist',async (req,res)=>{
+app.get('/api/todayArtist',async (req,res)=>{
     const artists = await Artist_Today.findOne()
     if (!artists){
         return res.status(404).send("error")
@@ -110,7 +110,7 @@ app.get('/todayArtist',async (req,res)=>{
 })
 
 
-app.get('/allNames', async(req,res)=>{
+app.get('/api/allNames', async(req,res)=>{
     const artists = await Artist.find({}, 'name');
     return res.status(200).send(artists);
 })
@@ -118,7 +118,7 @@ app.get('/allNames', async(req,res)=>{
 
 let actual_artist;
 
-app.get('/cronJobTodayArtist', async (req,res)=>{
+app.get('/api/cronJobTodayArtist', async (req,res)=>{
     actual_artist = await takeArandomArtist();
     const deleteone = await Artist_Today.deleteOne();
     changePreviewURL(actual_artist)
