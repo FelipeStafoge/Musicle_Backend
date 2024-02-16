@@ -19,7 +19,6 @@ const Artist_Today = mongoose.model('Artist_Today', {
     tips: Array,    
 });
 
-
 function getRandomNumber(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
