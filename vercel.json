@@ -15,11 +15,5 @@
           "Access-Control-Allow-Origin": "*"
         }
       }
-    ],
-    "crons": [
-      {
-        "path": "/api/cronJobTodayArtist",
-        "schedule": "18 2 * * *"
-      }
     ]
 }
