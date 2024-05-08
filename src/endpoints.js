@@ -63,6 +63,14 @@ async function changePreviewURL(actual_artist){
 }
 
 
+async function sortByName(){
+    const sortedArtists = await Artist.find().sort({ name: 1 });
+    await Artist.deleteMany();
+    await Artist.insertMany(sortedArtists);
+}
+
+
+
 app.get('/', async (req,res)=>{
     const artists = await Artist.find();
     res.send(artists);
@@ -78,6 +86,7 @@ app.post("/post", async (req,res)=>{
     });
     
     await artist.save();
+    sortByName();
     return res.send(artist);
 })
 
