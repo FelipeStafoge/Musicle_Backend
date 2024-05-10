@@ -63,13 +63,6 @@ async function changePreviewURL(actual_artist){
 }
 
 
-async function sortByName(){
-    const sortedArtists = await Artist.find().sort({ name: 1 });
-    await Artist.deleteMany();
-    await Artist.insertMany(sortedArtists);
-}
-
-
 
 app.get('/', async (req,res)=>{
     const artists = await Artist.find();
@@ -111,6 +104,13 @@ app.put('/:id', async (req,res) =>{
 
 
 app.get('/api/todayArtist',async (req,res)=>{
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const formattedDay = day < 10 ? '0' + day : day;
+    const formattedMonth = month < 10 ? '0' + month : month;
+    const formattedDate = `${formattedDay}-${formattedMonth}-${year}`;
     const artists = await Artist_Today.findOne()
     if (!artists){
         return res.status(404).send("error")
@@ -120,8 +120,8 @@ app.get('/api/todayArtist',async (req,res)=>{
 
 
 app.get('/api/allNames', async(req,res)=>{
-    const artists = await Artist.find({}, 'name');
-    return res.status(200).send(artists);
+    const sortedArtists = await Artist.find({},'name').sort({ name: 1 });
+    return res.status(200).send(sortedArtists);
 })
 
 
