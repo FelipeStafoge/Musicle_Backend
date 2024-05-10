@@ -16,7 +16,8 @@ const Artist_Today = mongoose.model('Artist_Today', {
     artistID: String,
     name: String,
     preview_URL : String,
-    tips: Array,    
+    tips: Array,
+    todaysDate: String,    
 });
 
 function getRandomNumber(min, max) {
@@ -31,12 +32,19 @@ async function takeArandomArtist(){
     lenght_artist_list = artists.length;
     getRandomNumber(1, lenght_artist_list);
     random_artist = artists[getRandomNumber(1, lenght_artist_list)]
-
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const formattedDay = day < 10 ? '0' + day : day;
+    const formattedMonth = month < 10 ? '0' + month : month;
+    const formattedDate = `${formattedDay}-${formattedMonth}-${year}`;
     const artist_today = new Artist_Today({
         artistID: random_artist['artistID'],
         name: random_artist['name'],
         preview_URL: random_artist['preview_URL'],
-        tips: random_artist['tips']
+        tips: random_artist['tips'],
+        todaysDate: formattedDate,
     })
     await artist_today.save();
     return random_artist;
@@ -63,7 +71,6 @@ async function changePreviewURL(actual_artist){
 }
 
 
-
 app.get('/', async (req,res)=>{
     const artists = await Artist.find();
     res.send(artists);
@@ -77,15 +84,13 @@ app.post("/post", async (req,res)=>{
         preview_URL: req.body.preview_URL,
         tips: req.body.tips
     });
-    
     await artist.save();
-    sortByName();
     return res.send(artist);
 })
 
 
 app.delete("/:id", async(req,res) =>{
-    const artist = await Artist.findByIdAndDelete(req.params.id)
+    const artist = await Artist.findByIdAndDelete(req.params.id);
     return res.send(artist);
 })
 
@@ -104,17 +109,11 @@ app.put('/:id', async (req,res) =>{
 
 
 app.get('/api/todayArtist',async (req,res)=>{
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const formattedDay = day < 10 ? '0' + day : day;
-    const formattedMonth = month < 10 ? '0' + month : month;
-    const formattedDate = `${formattedDay}-${formattedMonth}-${year}`;
     const artists = await Artist_Today.findOne()
     if (!artists){
         return res.status(404).send("error")
     }
+
     return res.status(200).send(artists);
 })
 
