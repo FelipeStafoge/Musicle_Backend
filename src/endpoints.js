@@ -34,7 +34,9 @@ async function takeArandomArtist(){
     const artists = await Artist.find();
     lenght_artist_list = artists.length;
     getRandomNumber(1, lenght_artist_list);
+
     random_artist = artists[getRandomNumber(1, lenght_artist_list)]
+
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1;
@@ -42,29 +44,13 @@ async function takeArandomArtist(){
     const formattedDay = day < 10 ? '0' + day : day;
     const formattedMonth = month < 10 ? '0' + month : month;
     const formattedDate = `${formattedDay}-${formattedMonth}-${year}`;
-    const link = "https://itunes.apple.com/lookup?id="+random_artist['artistID']+"&entity=song"
+    const link = "https://api.deezer.com/artist/"+random_artist['artistID']+"/top?limit=50"
     const response = await fetch(link)
     const data =  await response.json()
     let num = getRandomNumber(1,50)
-
-    while (true) {
-        const dataId = await data['results'][num]['artistId']
-        const dataName = await data['results'][num]['artistName']
-        console.log("teste")
-        if (dataId == random_artist['artistID'] && dataName == random_artist['name']){
-            new_preview = data['results'][num]['previewUrl']
-            newTrackName = data['results'][num]['trackName']
-            newImgAlbum = data['results'][num]['artworkUrl100']
-            console.log(newTrackName)
-            console.log(newImgAlbum)
-            break;}
-            else{
-                if(num>=50){
-                    num += 1
-                }else{
-                    num -= 1
-                }
-            }}
+    new_preview = data['data'][num]['preview']
+    newTrackName = data['data'][num]['title_short']
+    newImgAlbum = data['data'][num]['album']['cover_xl'] 
             
     const artist_today = new Artist_Today({
         artistID: random_artist['artistID'],
