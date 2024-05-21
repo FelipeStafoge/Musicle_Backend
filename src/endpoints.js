@@ -34,9 +34,7 @@ async function takeArandomArtist(){
     const artists = await Artist.find();
     lenght_artist_list = artists.length;
     getRandomNumber(1, lenght_artist_list);
-
     random_artist = artists[getRandomNumber(1, lenght_artist_list)]
-
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1;
@@ -121,6 +119,12 @@ app.get('/api/allNames', async(req,res)=>{
     return res.status(200).send(sortedArtists);
 })
 
+app.get('/api/lenghtList', async (req,res)=>{
+    const artists = await Artist.find();
+    lenght_artist_list = artists.length;
+    console.log(lenght_artist_list)
+    return res.status(200).send("Quantidade de artistas no banco de dados: "+lenght_artist_list)
+})
 
 let actual_artist;
 
