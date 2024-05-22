@@ -21,6 +21,7 @@ const Artist_Today = mongoose.model('Artist_Today', {
     imgAlbum: String,
     tips: Array,
     todaysDate: String,    
+    topTenSongs: Array,
 });
 
 function getRandomNumber(min, max) {
@@ -46,6 +47,22 @@ async function takeArandomArtist(){
     const response = await fetch(link)
     const data =  await response.json()
     let num = getRandomNumber(1,50)
+
+    const getSongs = async (artist) =>{
+        const responseTopSongs = await fetch(`https://api.deezer.com/artist/${artist}/top?limit=10`);
+        const dataTopSongs = await responseTopSongs.json();
+        const result = dataTopSongs.data;
+        const list = result.map((song) => song.title_short);
+        return list;
+        
+    }
+    const listSongs = await getSongs(random_artist['artistID'])
+
+      
+ 
+
+
+
     new_preview = data['data'][num]['preview']
     newTrackName = data['data'][num]['title_short']
     newImgAlbum = data['data'][num]['album']['cover_xl'] 
@@ -58,6 +75,7 @@ async function takeArandomArtist(){
         imgAlbum: newImgAlbum,
         tips: random_artist['tips'],
         todaysDate: formattedDate,
+        topTenSongs: listSongs,
         })
 
     await artist_today.save();
