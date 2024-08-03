@@ -43,26 +43,12 @@ async function takeArandomArtist(){
     const formattedDay = day < 10 ? '0' + day : day;
     const formattedMonth = month < 10 ? '0' + month : month;
     const formattedDate = `${formattedDay}-${formattedMonth}-${year}`;
-    const link = "https://api.deezer.com/artist/"+random_artist['artistID']+"/top?limit=50"
+    const link = "https://api.deezer.com/artist/"+random_artist['artistID']+"/top?limit=10"
     const response = await fetch(link)
     const data =  await response.json()
-    let num = getRandomNumber(1,50)
-
-    const getSongs = async (artist) =>{
-        const responseTopSongs = await fetch(`https://api.deezer.com/artist/${artist}/top?limit=10`);
-        const dataTopSongs = await responseTopSongs.json();
-        const result = dataTopSongs.data;
-        const list = result.map((song) => song.title_short);
-        return list;
-        
-    }
-    const listSongs = await getSongs(random_artist['artistID'])
-
-      
- 
-
-
-
+    let num = getRandomNumber(1,10)
+    const result = data.data;
+    const list = result.map((song) => song.title_short);    
     new_preview = data['data'][num]['preview']
     newTrackName = data['data'][num]['title_short']
     newImgAlbum = data['data'][num]['album']['cover_xl'] 
@@ -75,7 +61,7 @@ async function takeArandomArtist(){
         imgAlbum: newImgAlbum,
         tips: random_artist['tips'],
         todaysDate: formattedDate,
-        topTenSongs: listSongs,
+        topTenSongs: list,
         })
 
     await artist_today.save();
